@@ -6,8 +6,8 @@ include @top_srcdir@/mk/gnu.bsdvars.mk
 .SUFFIXES :
 .SUFFIXES : .html .xhtml .js .xml .xpl .xbl
 
-RESOURCES = htmlpp.xsl htmldecor.xsl xhtml2xhtml.xsl
-TARGETS = htmlpp htmldecor HTMLDecor.js
+RESOURCES = htmlpp.xsl htmldecor.xsl xhtml2xhtml.xsl decor2xsl.xsl
+TARGETS = htmlpp htmldecor decor2xsl HTMLDecor.js
 
 # Rules
 all : build
@@ -25,6 +25,9 @@ htmlpp: htmlpp.pl
 	cp ${.IMPSRC} ${.TARGET}
 	
 htmldecor: htmldecor.pl
+	cp ${.IMPSRC} ${.TARGET}
+	
+decor2xsl: decor2xsl.pl
 	cp ${.IMPSRC} ${.TARGET}
 	
 HTMLDecor.js: ${srcdir}/lib/Meeko/HTMLDecor.js
