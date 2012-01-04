@@ -6,7 +6,7 @@ include @top_srcdir@/mk/gnu.bsdvars.mk
 .SUFFIXES :
 .SUFFIXES : .html .xhtml .js .xml .xpl .xbl
 
-RESOURCES = htmlpp.xsl htmldecor.xsl xhtml2xhtml.xsl decor2xsl.xsl
+RESOURCES = htmlpp.xsl xhtml2xhtml.xsl decor2xsl.xsl
 TARGETS = htmlpp htmldecor decor2xsl HTMLDecor.js
 
 # Rules
