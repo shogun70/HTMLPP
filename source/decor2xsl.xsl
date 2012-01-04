@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2009-2012 Sean Hogan (http://meekostuff.net/) -->
+<!-- Copyright 2012 Sean Hogan (http://meekostuff.net/) -->
 
 <xsl:stylesheet version="1.0" exclude-result-prefixes="xsl"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2009-2010 Sean Hogan (http://meekostuff.net/)
+# Copyright 2009-2012 Sean Hogan (http://meekostuff.net/)
 
 use 5.010;
 use Cwd;

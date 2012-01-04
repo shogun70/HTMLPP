@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2011 Sean Hogan (http://meekostuff.net/)
+# Copyright 2012 Sean Hogan (http://meekostuff.net/)
 
 use Cwd;
 use File::Basename;
