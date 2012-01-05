@@ -1,19 +1,17 @@
 #!/usr/bin/perl
 
 # Copyright 2009-2010 Sean Hogan (http://meekostuff.net/)
+# TODO expand URIs in <xbl> trees
 
+use 5.010;
 use Cwd;
-$PWD = getcwd();
-$XSLTPROC = "/usr/bin/xsltproc --novalid --nonet";
-#$TIDY = "/usr/bin/tidy -asxhtml -q --tidy-mark no";
-$BINPATH = `dirname $0`;
-chomp $BINPATH;
-$TIDY = "$XSLTPROC --html $BINPATH/xhtml2xhtml.xsl";
-$TEMPLATE = "$0.xsl";
+use File::Slurp;
+use Mojo::DOM;
+use URI::Template;
+
 $PARAMS = {};
 $SCRIPTS = [];
 $POST_SCRIPTS = [];
-$IS_HTML = 0;
 $VERBOSE = 0;
 $SRC = "";
 
@@ -42,10 +40,6 @@ for (my $i=0; $i<$n; $i++) {
 		push @{$POST_SCRIPTS}, $uri;
 		next;
 	}
-	elsif ("--html" eq $arg) {
-		$IS_HTML = 1;
-		next;
-	}
 	elsif ("--verbose" eq $arg) {
 		$VERBOSE = 1;
 		next;
@@ -64,19 +58,47 @@ for (my $i=0; $i<$n; $i++) {
 	}
 }
 
-$SRCPATH = `dirname $SRC`;
-chomp $SRCPATH;
+my $text = read_file( $SRC );
+my $doc = Mojo::DOM->new($text);
+my $head = $doc->at("head");
+my $body = $doc->at("body");
 
-$OUTARGS = "";
-for my $name (keys %{$PARAMS}) {
-	my $value = $PARAMS->{$name};
-	$OUTARGS .= "--stringparam $name \"$value\" ";
+my $marker = $head->children->first;
+foreach (@$SCRIPTS) {
+	$marker->prepend("<script src=\"$_\"></script>\n");
 }
-$OUTARGS .= "--stringparam SCRIPT_URLS \"" . join(" ", @{$SCRIPTS}) . "\" ";
-$OUTARGS .= "--stringparam POST_SCRIPT_URLS \"" . join(" ", @{$POST_SCRIPTS}) . "\" ";
+$marker = $head->children->reverse->first;
+foreach (@$POST_SCRIPTS) {
+	$marker->append("<script src=\"$_\"></script>\n");
+}
 
-my $execStr = ($IS_HTML) ? "$TIDY $SRC | " : "";
-$execStr .= "$XSLTPROC --path $SRCPATH --path $PWD $OUTARGS $TEMPLATE ";
-$execStr .= ($IS_HTML) ? "-" : "$SRC";
-$VERBOSE and print STDERR "$execStr\n";
-system($execStr);
+sub walkTree {
+	my $node = shift; 
+	my $callback = shift;
+	!$node->type and return;
+	&$callback($node);
+	$node->children->each(sub { 
+		my $node = shift; 
+		walkTree($node, $callback); 
+	});
+}
+
+walkTree($doc->children->first, sub {
+	my $node = shift;
+	my $attrName = {
+		script => "src",
+		img => "src",
+		link => "href",
+		a => "href",
+		form => "action",
+		input => "formaction",
+		button => "formaction"
+	}->{$node->type};
+	my $uri = $node->attrs($attrName);
+	!$uri and return;
+	# FIXME warn for undefined URI variables
+	$uri = URI::Template->new($uri)->process_to_string($PARAMS);
+	$node->attrs($attrName => $uri);
+});
+
+print $doc;
