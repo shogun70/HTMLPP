@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -X
 
 # Copyright 2009-2010 Sean Hogan (http://meekostuff.net/)
 # TODO expand URIs in <xbl> trees
@@ -98,6 +98,9 @@ walkTree($doc->children->first, sub {
 	!$uri and return;
 	# FIXME warn for undefined URI variables
 	$uri = URI::Template->new($uri)->process_to_string($PARAMS);
+	# FIXME URI::Template is only at Level 1
+	# which doesn't support paths in subst variables
+	$uri =~ s/%2f/\//gi;
 	$node->attrs($attrName => $uri);
 });
 
