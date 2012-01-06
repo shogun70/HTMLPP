@@ -8,6 +8,8 @@ The Utilities
 	expanding variables in URLs
 * htmldecor - command-line script for merging two html pages, 
 	one with content and the other with page-decor
+* decor2xsl - command-line script for creating an xslt-stylesheet
+	from a HTML decor page
 * HTMLDecor.js - elegantly merges an external decor page 
 	into the (presumeably fairly raw) content page
 	
@@ -19,20 +21,30 @@ Usage
 
 	htmlpp [--script before.js] [--post-script after.js] [--string-param name value] page.html > output.html
 
-1. Inserts before.js before any scripts (in the head) of page.html and after.js after any scripts.
+1. Inserts `before.js` before any scripts (in the head) of `page.html` and `after.js` after any scripts.
 2. Performs variable expansion of passed parameters into any URI attributes (@href, @src).
-   See http://tools.ietf.org/html/draft-gregorio-uritemplate-07 for where this should be heading.
-   But for now it replaces `{name}` with `value`.
+   Uses Perl's [URI::Template module](http://search.cpan.org/dist/URI-Template/lib/URI/Template.pm)
+   which implements [uri-templates](http://tools.ietf.org/html/draft-gregorio-uritemplate-03)
    
 ### htmldecor
 
-	htmldecor --decor decor.html page.html > output.html
+	htmldecor [--wrap] --decor decor.html page.html > output.html
 
 The equivalent of HTMLDecor.js but runs on the server-side.
 
+If --wrap option is specified then the merging operation is slightly different for the content of `page.html`.
+The entire content of the `<body>` tag is placed within the first descendant of the `<body>` of `decor.html`
+which has `@role="main"`, replacing any content already there.
+
+### decor2xsl
+
+	decor2xsl decor.html > decor.xsl
+	
+Converts a decor page into an xslt stylesheet that can be referenced by xhtml pages. 
+
 ### HTMLDecor.js
 
-To see this in action visit http://meekostuff.net. Much of the site is dog-fooding this script. 
+To see this in action visit http://meekostuff.net/blog which is dog-fooding this script. 
 
 Create a HTML document (page.html) with some page specific content:
 
@@ -40,7 +52,7 @@ Create a HTML document (page.html) with some page specific content:
 	<html>
 	<head>
 		<!-- create a link to the decor page -->
-		<link rel="meeko-decor" type="text/decor+html" href="decor.html" />
+		<link rel="meeko-decor" type="text/html" href="decor.html" />
 		<!-- and source the HTMLDecor script -->
 		<script src="/path/to/HTMLDecor.js"></script>
 		<style>
@@ -145,5 +157,5 @@ For now it is easiest to copy from the installation available at http://devel.me
 License
 -------
 
-The long-term license is still undecided - I'm tossing up between LGPL and MIT.
+The long-term license is still undecided.
 For now it is available under Create-Commons Attribution, No-Derivitives.
