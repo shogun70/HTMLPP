@@ -7,7 +7,7 @@ include @top_srcdir@/mk/gnu.bsdvars.mk
 .SUFFIXES : .html .xhtml .js .xml .xpl .xbl
 
 RESOURCES = xhtml2xhtml.xsl decor2xsl.xsl
-TARGETS = htmlpp htmldecor decor2xsl HTMLDecor.js
+TARGETS = htmlpp htmldecor decor2xsl 
 
 # Rules
 all : build
@@ -28,8 +28,5 @@ htmldecor: htmldecor.pl
 	cp ${.IMPSRC} ${.TARGET}
 	
 decor2xsl: decor2xsl.pl
-	cp ${.IMPSRC} ${.TARGET}
-	
-HTMLDecor.js: ${srcdir}/lib/Meeko/HTMLDecor.js
 	cp ${.IMPSRC} ${.TARGET}
 	

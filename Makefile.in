@@ -1,7 +1,7 @@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-SUBDIRS = source test
+SUBDIRS = source
 
 include @top_srcdir@/mk/gnu.bsdvars.mk
 
